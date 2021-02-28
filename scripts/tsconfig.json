@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM"],
+    "types": ["node"],
+    "esModuleInterop": true
+  }
+}

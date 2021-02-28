@@ -4,4 +4,9 @@ ls:
     .d.ts: camelCase
     .spec.ts: camelCase
     .md: kebab-case
-    
+    .dir: kebab-case | regex:__tests__
+
+ignore:
+  - .git
+  - node_modules
+  - src/.vitepress

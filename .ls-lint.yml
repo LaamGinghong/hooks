@@ -1,0 +1,7 @@
+ls:
+  src/*:
+    .ts: camelCase
+    .d.ts: camelCase
+    .spec.ts: camelCase
+    .md: kebab-case
+    

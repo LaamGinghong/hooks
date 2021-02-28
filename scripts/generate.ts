@@ -8,26 +8,39 @@ import ora from 'ora'
 import { resolve } from 'path'
 import { mkdir, pathExistsSync, writeFile } from 'fs-extra'
 
-import { getIndexTemplate, getFnTemplate, getTypesTemplate } from './template'
+import { getIndexTemplate, getFnTemplate, getTypesTemplate, getDocTemplate } from './template'
 
 interface Answers {
   functionName: string
+  type: 'Async' | 'Table' | 'UI' | 'SideEffect' | 'LifeCycle' | 'State' | 'DOM'
 }
 
 const questions: QuestionCollection[] = [
-  { name: 'functionName', message: 'Please enter the function name', default: 'request' },
+  { name: 'functionName', message: 'Please enter the function name' },
+  {
+    name: 'type',
+    type: 'list',
+    message: 'Please select the type of the function',
+    choices: ['Async', 'Table', 'UI', 'SideEffect', 'LifeCycle', 'State', 'DOM'],
+  },
 ]
 
 async function generate() {
   console.log(chalk.greenBright(textSync('I-Hooks Generate Tool')))
 
-  const { functionName } = await inquirer.prompt<Answers>(questions)
+  const { functionName, type } = await inquirer.prompt<Answers>(questions)
 
   const spin = ora()
   spin.start('The template is being generated, please wait...')
 
+  const typeName = kebabCase(type)
+  const typePath = resolve(__dirname, '../', 'src', 'hooks', typeName)
+  if (!pathExistsSync(typePath)) {
+    await mkdir(typePath)
+  }
+
   const dirName = `use-${kebabCase(functionName)}`
-  const dirPath = resolve(__dirname, '../', 'src', dirName)
+  const dirPath = resolve(typePath, dirName)
 
   if (pathExistsSync(dirPath)) {
     spin.fail(chalk.redBright(`${functionName} function already exists, please change it！`))
@@ -37,7 +50,6 @@ async function generate() {
   // create dir
   await mkdir(dirPath)
   await mkdir(`${dirPath}/__tests__`)
-  await mkdir(`${dirPath}/demo`)
 
   const tsName = camelCase(dirName)
   const upperFistName = upperFirst(tsName)
@@ -45,6 +57,7 @@ async function generate() {
   await writeFile(`${dirPath}/index.ts`, getIndexTemplate(tsName))
   await writeFile(`${dirPath}/${tsName}.ts`, getFnTemplate(upperFistName))
   await writeFile(`${dirPath}/types.ts`, getTypesTemplate(upperFistName))
+  await writeFile(`${dirPath}/index.md`, getDocTemplate(tsName))
 
   spin.succeed(`The template is successfully created, enjoy coding ${chalk.bgRed.bold('   o(*≧▽≦)ツ┏━┓   ')}`)
   console.log(chalk.bold.yellowBright(textSync('Hello World!')))

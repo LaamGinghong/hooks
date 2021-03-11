@@ -55,7 +55,7 @@ async function generate() {
   const upperFistName = upperFirst(tsName)
 
   await writeFile(`${dirPath}/index.ts`, getIndexTemplate(tsName))
-  await writeFile(`${dirPath}/${tsName}.ts`, getFnTemplate(upperFistName))
+  await writeFile(`${dirPath}/${tsName}.ts`, getFnTemplate(tsName))
   await writeFile(`${dirPath}/types.ts`, getTypesTemplate(upperFistName))
   await writeFile(`${dirPath}/index.md`, getDocTemplate(tsName))
 

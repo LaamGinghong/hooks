@@ -1,28 +1,27 @@
-export const getIndexTemplate = (name: string): string => {
-  return `export * from './${name}'
+import { upperFirst } from 'lodash'
+
+export const getIndexTemplate = (name: string): string =>
+  `export * from './${name}'
 export * from './types'  
 `
-}
 
-export const getTypesTemplate = (name: string): string => {
-  return `export interface ${name}Params {
+export const getTypesTemplate = (name: string): string =>
+  `export interface ${name}Params {
 }
 
 export interface ${name}Result {
 } 
 `
-}
 
-export const getFnTemplate = (name: string): string => {
-  return `import type { ${name}Params, ${name}Result } from './types'
+export const getFnTemplate = (name: string): string =>
+  `import type { ${upperFirst(name)}Params, ${upperFirst(name)}Result } from './types'
 
-export function ${name}(params: ${name}Params): ${name}Result {
+export default function ${name}(params: ${upperFirst(name)}Params): ${upperFirst(name)}Result {
 }
 `
-}
 
-export const getDocTemplate = (name: string): string => {
-  return `# ${name}
+export const getDocTemplate = (name: string): string =>
+  `# ${name}
 
 ## 代码演示
 
@@ -60,4 +59,3 @@ const {
 
 <!-- 所有单元格的两端都需要有一个空格 --> 
 `
-}

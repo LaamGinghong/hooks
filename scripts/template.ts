@@ -1,7 +1,7 @@
 import { upperFirst } from 'lodash'
 
 export const getIndexTemplate = (name: string): string =>
-  `export * from './${name}'
+  `export { default } from './${name}'
 export * from './types'  
 `
 

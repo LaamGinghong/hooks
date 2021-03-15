@@ -6,7 +6,7 @@ import inquirer from 'inquirer'
 import { camelCase, kebabCase, upperFirst } from 'lodash'
 import ora from 'ora'
 import { resolve } from 'path'
-import { mkdir, pathExistsSync, writeFile } from 'fs-extra'
+import { mkdir, pathExistsSync, readFile, writeFile } from 'fs-extra'
 
 import { getIndexTemplate, getFnTemplate, getTypesTemplate, getDocTemplate } from './template'
 
@@ -58,6 +58,15 @@ async function generate() {
   await writeFile(`${dirPath}/${tsName}.ts`, getFnTemplate(tsName))
   await writeFile(`${dirPath}/types.ts`, getTypesTemplate(upperFistName))
   await writeFile(`${dirPath}/index.md`, getDocTemplate(tsName))
+
+  // modify index
+  let moduleIndex = await readFile(resolve(typePath, 'index.ts'), 'utf-8')
+  moduleIndex = moduleIndex
+    ? `${moduleIndex}
+export { default as use${upperFistName} } from './${dirName}'`
+    : `export { default as use${upperFistName} } from './${dirName}'`
+
+  await writeFile(resolve(typePath, 'index.ts'), moduleIndex)
 
   spin.succeed(`The template is successfully created, enjoy coding ${chalk.bgRed.bold('   o(*≧▽≦)ツ┏━┓   ')}`)
   console.log(chalk.bold.yellowBright(textSync('Hello World!')))

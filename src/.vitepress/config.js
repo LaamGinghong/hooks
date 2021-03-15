@@ -8,14 +8,16 @@ function buildSideBar(path) {
     return {
       text: file,
       children: readdirSync(resolve(path, file)).map((child) => {
+        if (child === 'index.ts' || child.endsWith('.ts')) return
         return {
           text: camelCase(child),
           link: `/hooks/${file}/${child}/index`,
         }
-      }),
+      }).filter(item => item),
     }
   })
 }
+
 
 const sidebar = {
   '/guide/': [

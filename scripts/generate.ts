@@ -8,7 +8,7 @@ import ora from 'ora'
 import { resolve } from 'path'
 import { mkdir, pathExistsSync, readFile, writeFile } from 'fs-extra'
 
-import { getIndexTemplate, getFnTemplate, getTypesTemplate, getDocTemplate } from './template'
+import { getIndexTemplate, getFnTemplate, getTypesTemplate, getDocTemplate, getTestTemplate } from './template'
 
 interface Answers {
   functionName: string
@@ -58,6 +58,7 @@ async function generate() {
   await writeFile(`${dirPath}/${tsName}.ts`, getFnTemplate(tsName))
   await writeFile(`${dirPath}/types.ts`, getTypesTemplate(upperFistName))
   await writeFile(`${dirPath}/index.md`, getDocTemplate(tsName))
+  await writeFile(`${dirPath}/__tests__/${tsName}.spec.ts`, getTestTemplate(tsName))
 
   // modify index
   let moduleIndex = await readFile(resolve(typePath, 'index.ts'), 'utf-8')

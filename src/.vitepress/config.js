@@ -18,6 +18,10 @@ function buildSideBar(path) {
 }
 
 const sidebar = {
+  '/guide/': [
+    { text: '快速上手', link: '/guide/quick-start' },
+    { text: 'API 规范', link: '/guide/api-specification' },
+  ],
   '/hooks/': buildSideBar(resolve(__dirname, '../', 'hooks')),
 }
 
@@ -27,6 +31,7 @@ module.exports = {
   description: 'Vue3 Hooks Library.',
   themeConfig: {
     nav: [
+      { text: '指南', link: '/guide/quick-start', activeMatch: '^/guide/' },
       { text: 'Hooks', link: '/hooks/async/use-request/index', activeMatch: '^/hooks/' },
       { text: 'Github', link: 'https://github.com/LaamGinghong/hooks' },
     ],

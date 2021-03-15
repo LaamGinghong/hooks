@@ -59,3 +59,8 @@ const {
 
 <!-- 所有单元格的两端都需要有一个空格 --> 
 `
+
+export const getTestTemplate = (name: string): string => `describe('${name}.ts', () => {
+  
+})
+`

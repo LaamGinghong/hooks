@@ -1,0 +1,3 @@
+describe('useThrottleFn.ts', () => {
+  
+})

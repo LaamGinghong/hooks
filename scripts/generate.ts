@@ -12,7 +12,7 @@ import { getIndexTemplate, getFnTemplate, getTypesTemplate, getDocTemplate, getT
 
 interface Answers {
   functionName: string
-  type: 'Async' | 'Table' | 'UI' | 'SideEffect' | 'LifeCycle' | 'State' | 'DOM'
+  type: 'Async' | 'Table' | 'UI' | 'SideEffect' | 'State' | 'DOM'
 }
 
 const questions: QuestionCollection[] = [
@@ -21,7 +21,7 @@ const questions: QuestionCollection[] = [
     name: 'type',
     type: 'list',
     message: 'Please select the type of the function',
-    choices: ['Async', 'Table', 'UI', 'SideEffect', 'LifeCycle', 'State', 'DOM'],
+    choices: ['Async', 'Table', 'UI', 'SideEffect', 'State', 'DOM'],
   },
 ]
 

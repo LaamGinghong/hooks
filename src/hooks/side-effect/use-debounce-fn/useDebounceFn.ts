@@ -7,7 +7,7 @@ const DEFAULT_OPTIONS: Required<UseDebounceFnOptions> = {
   trailing: true,
 }
 
-export default function useDebounceFunction<T extends Fn>(
+export default function useDebounceFn<T extends Fn>(
   fn: T,
   options: UseDebounceFnOptions = DEFAULT_OPTIONS,
 ): UseDebounceFnResult<T> {

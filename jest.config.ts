@@ -2,7 +2,7 @@ export default {
   roots: ['<rootDir>/src'],
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.ts$': [
+    '^.+\\.(j|t)s$': [
       'babel-jest',
       {
         presets: [
@@ -19,6 +19,7 @@ export default {
       },
     ],
   },
+  transformIgnorePatterns: ['<rootDir>/node_modules/(?!lodash-es)'],
   testMatch: ['**/*.spec.ts'],
   moduleFileExtensions: ['ts', 'js'],
   collectCoverage: true,

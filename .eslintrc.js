@@ -20,10 +20,10 @@ module.exports = {
   plugins: ['@typescript-eslint', 'prettier'],
   settings: {
     'import/resolver': {
-      'node': {
-        'extensions': ['.js', '.ts'],
+      node: {
+        extensions: ['.ts', '.js', '.json'],
       },
-      'typescript': {},
+      typescript: {},
     },
   },
   rules: {

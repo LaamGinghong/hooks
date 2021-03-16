@@ -1,3 +1,2 @@
 **/*.js
 src/**/index.ts
-*.js

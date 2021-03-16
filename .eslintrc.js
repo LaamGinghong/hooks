@@ -7,9 +7,9 @@ module.exports = {
   extends: [
     'airbnb-base',
     'plugin:eslint-comments/recommended',
-    'plugin:import/typescript',
     'plugin:unicorn/recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:import/typescript',
     'prettier',
   ],
   parser: '@typescript-eslint/parser',
@@ -20,9 +20,10 @@ module.exports = {
   plugins: ['@typescript-eslint', 'prettier'],
   settings: {
     'import/resolver': {
-      node: {
-        extensions: ['.ts', '.js', '.json'],
+      'node': {
+        'extensions': ['.js', '.ts'],
       },
+      'typescript': {},
     },
   },
   rules: {

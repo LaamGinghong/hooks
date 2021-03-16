@@ -4,7 +4,7 @@ import { onMounted, ref } from 'vue'
 import type { UseDebounceFnOptions } from '../use-debounce-fn'
 import useDebounceFn from '../use-debounce-fn'
 
-export default function useDebounce<T>(value: T, options?: UseDebounceFnOptions) {
+export default function useDebounce<T>(value: T, options?: UseDebounceFnOptions): T {
   const state = ref(value)
 
   const { run } = useDebounceFn(() => {
@@ -13,5 +13,5 @@ export default function useDebounce<T>(value: T, options?: UseDebounceFnOptions)
 
   onMounted(run)
 
-  return state
+  return (state as unknown) as T
 }

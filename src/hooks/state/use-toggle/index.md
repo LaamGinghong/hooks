@@ -7,16 +7,19 @@
 ```ts
 import { useToggle } from 'i-hooks'
 
-const options = useToggle()
+const [state, { toggle, setLeft, setRight }] = useToggle()
 ```
 
 ## 基础 API
   
 ```ts
-const {
-// result ...
-} = useToggle(
-// params ...
+const [state, { toggle, setLeft, setRight }] = useToggle(
+  defaultValue?: boolean,
+)
+
+const [state,{ toggle, setLeft, setRight }] = useToggle(
+  defaultValue: any = false,
+  reverseValue?: any,
 )
 ```
 
@@ -26,12 +29,22 @@ const {
 
 | 参数 | 说明 | 类型 | 默认值 | 全局配置 |
 | --- | ---- | --- | ----- | ------ |
-| `data` | description | `string` | 'i-hooks' | ✅ |  
+| `defaultValue` | 可选项，传入的默认值 | `number | string | boolean | undefined`  | `false` | - |  
+| `reverseValue` | 可选项，传入的默认值 | `number | string | boolean | undefined`  | - | - |  
 
 ### Result
 
 | 参数 | 说明 | 类型 |  
 | --- | ---- | --- |
-| `data` | description | `number` |
+| `state` | 当前状态值 | - |
+| `actions` | 操作集合 | `UseToggleActions` |
+
+### Actions
+
+| 参数 | 说明 | 类型 |  
+| --- | ---- | --- |
+| `toggle` | 状态变更函数，允许传入一个参数定向修改 | `(value: any) => void` |
+| `setLeft` | 设置为 `defaultValue` | `() => void` |
+| `setRight` | 设置为 `reverseValue` | `() => void` |
 
 <!-- 所有单元格的两端都需要有一个空格 --> 

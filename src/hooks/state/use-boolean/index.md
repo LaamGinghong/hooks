@@ -31,7 +31,7 @@ const [ state, { toggle, setTrue, setFalse }] = useBoolean(
 | 参数 | 说明 | 类型 |  
 | --- | ---- | --- |
 | `state` | 当前状态值 | `boolean` |
-| `actions` | 操作集合 | `Actions` |
+| `actions` | 操作集合 | `UseBooleanActions` |
 
 ### Actions
 | 参数 | 说明 | 类型 |  

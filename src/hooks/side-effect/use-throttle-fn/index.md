@@ -36,7 +36,7 @@ const {
 | 参数 | 说明 | 类型 | 默认值 | 全局配置 |
 | --- | ---- | --- | ----- | ------ |
 | `fn` | 需要防抖执行的函数 | `(...args: any[]) => any` | - | - |  
-| `options` | 配置防抖的行为 | `UseDebounceFnOptions` | - | - |  
+| `options` | 配置防抖的行为 | `UseThrottleOptions` | - | - |  
 
 ### Options
 

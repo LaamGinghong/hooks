@@ -40,6 +40,9 @@ module.exports = {
             directory: false,
             direction: false,
           },
+          fn: {
+            function: false
+          }
         },
       },
     ],

@@ -19,9 +19,6 @@ export default {
       },
     ],
   },
-  moduleNameMapper: {
-    '^@$': '<rootDir>/src',
-  },
   transformIgnorePatterns: ['<rootDir>/node_modules/(?!lodash-es)'],
   testMatch: ['**/*.spec.ts'],
   moduleFileExtensions: ['ts', 'js'],

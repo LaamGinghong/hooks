@@ -2,7 +2,7 @@ import type { Ref } from 'vue'
 
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | string
 
-export interface RequestServiceConfig {
+export interface RequestServiceConfig<Params extends Record<string, any> = Record<string, any>, Data = Params> {
   /**
    * 请求子路由
    */
@@ -23,11 +23,11 @@ export interface RequestServiceConfig {
   /**
    * URL上的请求参数
    */
-  params?: Record<string, any>
+  params?: Params
   /**
    * Body里面的请求参数
    */
-  data?: Record<string, any>
+  data?: Data
   /**
    * 请求超时
    */
@@ -50,13 +50,13 @@ export interface RequestServiceConfig {
   [key: string]: any
 }
 
-export interface RequestResult {
+export interface RequestResult<Params extends any[], Result extends any = Record<string, any>> {
   /**
    * 请求返回的数据
    * 默认是 undefined
    * 所有数据均会经过 formatResult 处理
    */
-  data: any | undefined
+  data: Result | undefined
   /**
    * 请求抛出的异常
    * 默认是 undefined
@@ -72,7 +72,7 @@ export interface RequestResult {
    * 参数会传给 RequestParams 中的 RequestFn
    * @param arguments_
    */
-  run: (...arguments_: any[]) => Promise<void>
+  run: (...arguments_: Params) => Promise<void>
   /**
    * 取消本次请求
    * 如果当前请求为轮询，则暂停当前轮询
@@ -85,16 +85,20 @@ export interface RequestResult {
   refresh: () => Promise<void>
 }
 
-export interface RequestMultipleResult {
+export interface MultipleRequestResult<Params extends any[], Result extends any = Record<string, any>> {
   /**
    * 多次请求的状态键值对
    * key 为请求唯一 id
    * value 为当前请求返回状态
    */
-  fetches: Record<string, RequestResult>
+  fetches: Record<string, RequestResult<Params, Result>>
 }
 
-export interface RequestParams {
+export interface RequestParams<
+  Params extends any[],
+  Request extends any = Record<string, any>,
+  Response extends any = Record<string, any>
+> {
   /**
    * 手动模式
    * 如果开启，则请求需要手动调用 RequestResult 的 run 函数才会执行
@@ -109,13 +113,13 @@ export interface RequestParams {
    * 格式化请求响应
    * @param response
    */
-  formatResult: (response: any) => any
+  formatResult: (response: Response) => Request
 
   /**
    * 请求成功回调
    * 参数为经过 formatResult 处理过的请求响应
    */
-  onSuccess(data: any): void
+  onSuccess(data: Request): void
 
   /**
    * 失败回调
@@ -126,7 +130,7 @@ export interface RequestParams {
   /**
    * 自动请求时的默认参数
    */
-  defaultParams: any[]
+  defaultParams: Params
   /**
    * 请求状态延时变化
    * 防止闪烁
@@ -179,7 +183,11 @@ export interface RequestParams {
   indexRetreat: number
 }
 
-export interface MultipleRequestParams extends RequestParams {
+export interface MultipleRequestParams<
+  Params extends any[],
+  Request extends any = Record<string, any>,
+  Response extends any = Record<string, any>
+> extends RequestParams<Params, Request, Response> {
   /**
    * 唯一请求 ID
    * 用于匹配多个请求结果

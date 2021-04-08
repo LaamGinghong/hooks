@@ -34,7 +34,7 @@ function useRequest<Result, Params = Record<string, any>, Data = Params>(
   const isMultiple = 'fetchKey' in options
   const data: Ref<Result | undefined> = ref()
   const error: Ref<Error | undefined> = ref()
-  const loading = ref(false)
+  const [loading, { toggle: toggleLoading }] = useBoolean()
   const fetches: Ref<
     Map<
       ReturnType<MultipleRequestOptions<Result, Params>['fetchKey']>,
@@ -47,11 +47,13 @@ function useRequest<Result, Params = Record<string, any>, Data = Params>(
     : service
 
   const config = useConfig(options)
+  let lastParams: Params | undefined
 
   const run = (params?: Params): Promise<void> => {
+    lastParams = params
     const { requestMethod, formatResult, formatParams, onSuccess, onError, throwOnError } = config
     currentService.params = formatParams!(params)
-
+    toggleLoading()
     return requestMethod!<Params, Data>(currentService)
       .then((response) => {
         const result = formatResult!(response)
@@ -64,16 +66,17 @@ function useRequest<Result, Params = Record<string, any>, Data = Params>(
 
         if (throwOnError) throw error_
       })
+      .finally(() => {
+        toggleLoading()
+      })
   }
 
   const cancel = (): void => {
+    // todo 处理防抖节流
     console.log(data)
   }
 
-  const refresh = (): Promise<void> => {
-    console.log(data)
-    return Promise.resolve()
-  }
+  const refresh = (): Promise<void> => run(lastParams)
 
   if (!config.manual) {
     run(config.defaultParams)

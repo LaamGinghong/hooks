@@ -1,2 +1,2 @@
-export { default as useUseBoolean } from './use-boolean'
-export { default as useUseToggle } from './use-toggle'
+export { default as useBoolean } from './use-boolean'
+export { default as useToggle } from './use-toggle'

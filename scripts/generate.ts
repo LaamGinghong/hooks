@@ -64,8 +64,8 @@ async function generate() {
   let moduleIndex = await readFile(resolve(typePath, 'index.ts'), 'utf-8')
   moduleIndex = moduleIndex
     ? `${moduleIndex}
-export { default as use${upperFistName} } from './${dirName}'`
-    : `export { default as use${upperFistName} } from './${dirName}'`
+export { default as ${tsName} } from './${dirName}'`
+    : `export { default as ${tsName} } from './${dirName}'`
 
   await writeFile(resolve(typePath, 'index.ts'), moduleIndex)
 

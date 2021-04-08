@@ -1,2 +1,2 @@
-export { default as useUseEventListener } from './use-event-listener'
-export { default as useUseDocumentVisibility } from './use-document-visibility'
+export { default as useEventListener } from './use-event-listener'
+export { default as useDocumentVisibility } from './use-document-visibility'

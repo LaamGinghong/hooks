@@ -50,147 +50,148 @@ export interface RequestServiceConfig<Params extends Record<string, any> = Recor
   [key: string]: any
 }
 
-export interface RequestResult<Params extends any[], Result extends any = Record<string, any>> {
+export interface RequestOptions<Result, Params extends Record<string, any>> {
   /**
-   * 请求返回的数据
-   * 默认是 undefined
-   * 所有数据均会经过 formatResult 处理
-   */
-  data: Result | undefined
-  /**
-   * 请求抛出的异常
-   * 默认是 undefined
-   */
-  error: Error | undefined
-  /**
-   * 当前请求的状态
-   */
-  loading: boolean
-  /**
-   * 手动执行请求
-   * 如果本次请求为轮询，则会重新开始轮询
-   * 参数会传给 RequestParams 中的 RequestFn
-   * @param arguments_
-   */
-  run: (...arguments_: Params) => Promise<void>
-  /**
-   * 取消本次请求
-   * 如果当前请求为轮询，则暂停当前轮询
-   */
-  cancel: () => void
-  /**
-   * 以最新的请求参数重新执行请求
-   * 如果请求为轮询，则会重新开始轮询
-   */
-  refresh: () => Promise<void>
-}
-
-export interface MultipleRequestResult<Params extends any[], Result extends any = Record<string, any>> {
-  /**
-   * 多次请求的状态键值对
-   * key 为请求唯一 id
-   * value 为当前请求返回状态
-   */
-  fetches: Record<string, RequestResult<Params, Result>>
-}
-
-export interface RequestParams<
-  Params extends any[],
-  Request extends any = Record<string, any>,
-  Response extends any = Record<string, any>
-> {
-  /**
-   * 手动模式
-   * 如果开启，则请求需要手动调用 RequestResult 的 run 函数才会执行
+   * 是否开启手动模式
+   * 如果开启，则需要手动触发 RequestResult 的 run 函数才会执行请求
    */
   manual: boolean
   /**
    * 依赖收集
-   * 当数组中的数据发生变化时自动重新发送请求
+   * 当被收集的依赖发生改变时，会自动触发请求执行
    */
-  refreshDeps: Ref<Ref<any>[]>
+  refreshDeps: Ref<Ref<any[]>>
+
   /**
    * 格式化请求响应
    * @param response
    */
-  formatResult: (response: Response) => Request
+  formatResult(response: any): Result
 
   /**
    * 请求成功回调
-   * 参数为经过 formatResult 处理过的请求响应
+   * 函数参数为格式化后的请求响应
+   * @param data
    */
-  onSuccess(data: Request): void
+  onSuccess(data: Result): void
 
   /**
-   * 失败回调
+   * 请求异常回调
+   * 函数参数为请求异常
    * @param error
    */
   onError(error: Error): void
 
   /**
-   * 自动请求时的默认参数
+   * 请求默认参数
+   * 当函数处于自动模式时，需要设置该字段
    */
   defaultParams: Params
   /**
    * 请求状态延时变化
    * 防止闪烁
+   * 设置为 0 表示不开启
+   * 如设置为一个负数会抛出异常并且关闭延时
    */
-  loadingDelay: boolean
+  loadingDelay: number
   /**
    * 页面不可见时是否继续轮询
-   * 全局配置默认为不轮询
    */
   pollingWhenHidden: boolean
   /**
    * 防抖间隔
+   * 优先级高于节流
    */
   debounceInterval: number
   /**
    * 节流间隔
+   * 优先级低于防抖
    */
   throttleInterval: number
   /**
-   * 是否抛出请求异常
-   * 默认情况下，为了避免因为请求异常阻塞 js 线程的执行，会在内部捕获异常并打印到控制台上
+   * 默认情况下，为避免因请求异常导致阻塞 js 线程引发的页面崩溃
+   * 函数会在遇到请求异常时捕获异常并打印在控制台上
+   * 如果需要手动处理异常，则设置为 true
    */
   throwOnError: boolean
   /**
-   * 缓存标识，全局通用
-   * 在设置了 cacheKey 的情况下，我们会在请求前判断是否有缓存，请求后更新缓存
+   * 全局缓存标识
+   * 如果设置了 cacheKey，函数会在每次请求后都更新缓存
    */
-  cacheKey: string
+  cacheKey: number | string | symbol
   /**
-   * 缓存过期时间
-   * 在时间内，函数在发送请求前都会先返回缓存数据
+   * 缓存有效时间
+   * 在有效时间内，函数在执行请求时会立马返回缓存，并在后台同步执行请求，待成功获取到请求响应后再返回请求结果
    * 如果设置为 -1 则表示缓存永不过期
-   * 需要配合 cacheKey 一起使用
+   * 需配合 cacheKey 一起使用
    */
   cacheTime: number
   /**
-   * 是否开启请求重试
-   * 默认情况下，在请求失败时会直接终止函数
-   * 如开启请求重试，会在允许次数内重新发送请求
+   * 允许请求重试
+   * 默认情况下函数会在请求异常时终止行为
    */
   allowRequestRetry: boolean
   /**
    * 允许请求重试次数
+   * 在允许次数内，函数会重新发起请求，直到超出允许次数范围
    */
   retryTimes: number
   /**
    * 指数退避
-   * 在请求重试的情况下，重新请求的间隔时间会以指数递增
+   * 请求重试的间隔会以指数形式递增
    */
   indexRetreat: number
 }
 
-export interface MultipleRequestParams<
-  Params extends any[],
-  Request extends any = Record<string, any>,
-  Response extends any = Record<string, any>
-> extends RequestParams<Params, Request, Response> {
+export interface MultipleRequestOptions<Result, Params extends Record<string, any>>
+  extends RequestOptions<Result, Params> {
   /**
-   * 唯一请求 ID
-   * 用于匹配多个请求结果
+   * 请求唯一 id
+   * 用于匹配多个重复的请求结果
    */
-  fetchKey: string
+  fetchKey: string | number | symbol
+}
+
+export interface RequestResult<Result, Params extends Record<string, any>> {
+  /**
+   * 请求响应
+   * 会经过 formatResult 处理
+   */
+  data: Result | undefined
+  /**
+   * 请求异常
+   * 需设置 throwOnError = true 才会被捕获
+   */
+  error: Error | undefined
+  /**
+   * 当前请求状态
+   */
+  loading: boolean
+
+  /**
+   * 手动执行请求
+   * 请求参数会传给 service
+   * 返回一个无状态的 Promise
+   */
+  run(data: Params): Promise<void>
+
+  /**
+   * 取消当前请求
+   * 如果本次请求为轮询状态，则会取消轮询
+   */
+  cancel(): void
+
+  /**
+   * 重新执行请求
+   * 如果本次请求为轮询状态，则会重新开始轮询
+   */
+  refresh(): Promise<void>
+}
+
+export interface MultipleRequestResult<Result, Params extends Record<string, any>> {
+  /**
+   * 一个 Map
+   * 保存着 fetchKey 和对应请求状态的键值对
+   */
+  fetches: Map<MultipleRequestOptions<Result, Params>['fetchKey'], RequestResult<Result, Params>>
 }

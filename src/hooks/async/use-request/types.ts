@@ -2,7 +2,7 @@ import type { Ref } from 'vue'
 
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | string
 
-export interface RequestServiceConfig<Params extends Record<string, any> = Record<string, any>, Data = Params> {
+export interface RequestServiceConfig<Params extends Record<string, any>, Data extends Record<string, any>> {
   /**
    * 请求子路由
    */
@@ -61,6 +61,18 @@ export interface RequestOptions<Result, Params extends Record<string, any>> {
    * 当被收集的依赖发生改变时，会自动触发请求执行
    */
   refreshDeps: Ref<Ref<any[]>>
+
+  /**
+   * 自定义请求函数
+   * @param service
+   */
+  requestMethod<_Params, _Data>(service: RequestServiceConfig<_Params, _Data>): Promise<any>
+
+  /**
+   * 格式化请求参数
+   * @param params
+   */
+  formatParams(params?: Params): any
 
   /**
    * 格式化请求响应
@@ -149,7 +161,7 @@ export interface MultipleRequestOptions<Result, Params extends Record<string, an
    * 请求唯一 id
    * 用于匹配多个重复的请求结果
    */
-  fetchKey: string | number | symbol
+  fetchKey: (...arguments_: any[]) => string | number | symbol
 }
 
 export interface RequestResult<Result, Params extends Record<string, any>> {
@@ -157,16 +169,16 @@ export interface RequestResult<Result, Params extends Record<string, any>> {
    * 请求响应
    * 会经过 formatResult 处理
    */
-  data: Result | undefined
+  data: Ref<Result | undefined>
   /**
    * 请求异常
    * 需设置 throwOnError = true 才会被捕获
    */
-  error: Error | undefined
+  error: Ref<Error | undefined>
   /**
    * 当前请求状态
    */
-  loading: boolean
+  loading: Ref<boolean>
 
   /**
    * 手动执行请求
@@ -193,5 +205,29 @@ export interface MultipleRequestResult<Result, Params extends Record<string, any
    * 一个 Map
    * 保存着 fetchKey 和对应请求状态的键值对
    */
-  fetches: Map<MultipleRequestOptions<Result, Params>['fetchKey'], RequestResult<Result, Params>>
+  fetches: Ref<
+    Map<
+      ReturnType<MultipleRequestOptions<Result, Params>['fetchKey']>,
+      Pick<RequestResult<Result, Params>, 'data' | 'error' | 'loading'>
+    >
+  >
+
+  /**
+   * 手动执行请求
+   * 请求参数会传给 service
+   * 返回一个无状态的 Promise
+   */
+  run(data: Params): Promise<void>
+
+  /**
+   * 取消当前请求
+   * 如果本次请求为轮询状态，则会取消轮询
+   */
+  cancel(): void
+
+  /**
+   * 重新执行请求
+   * 如果本次请求为轮询状态，则会重新开始轮询
+   */
+  refresh(): Promise<void>
 }

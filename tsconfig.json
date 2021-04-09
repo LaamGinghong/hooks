@@ -18,7 +18,9 @@
     "skipLibCheck": true,
     "paths": {
       "@": ["./src"],
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "hooks": ["./src/hooks"],
+      "hooks/*": ["./src/hooks/*"]
     }
   }
 }

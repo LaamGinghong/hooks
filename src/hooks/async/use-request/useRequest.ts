@@ -47,28 +47,54 @@ function useRequest<Result, Params = Record<string, any>, Data = Params>(
     : service
 
   const config = useConfig(options)
+  let allowRetryTimes = config.retryTimes!
+  let currentWaitTime = config.indexRetreat!
   let lastParams: Params | undefined
 
-  const run = (params?: Params): Promise<void> => {
+  let retryTimer: NodeJS.Timeout | undefined // 请求重试计时器
+
+  const run = async (params?: Params): Promise<void> => {
     lastParams = params
-    const { requestMethod, formatResult, formatParams, onSuccess, onError, throwOnError } = config
+    const {
+      requestMethod,
+      formatResult,
+      formatParams,
+      onSuccess,
+      onError,
+      throwOnError,
+      retryTimes,
+      indexRetreat,
+      allowRequestRetry,
+    } = config
     currentService.params = formatParams!(params)
     toggleLoading()
-    return requestMethod!<Params, Data>(currentService)
-      .then((response) => {
-        const result = formatResult!(response)
-        data.value = result
-        onSuccess?.(result)
-      })
-      .catch((error_) => {
-        error.value = error_
-        onError?.(error_)
 
-        if (throwOnError) throw error_
-      })
-      .finally(() => {
-        toggleLoading()
-      })
+    try {
+      const response = await requestMethod!<Params, Data>(currentService)
+      const result = formatResult!(response)
+      data.value = result
+      onSuccess?.(result)
+    } catch (error_) {
+      error.value = error_
+      console.error(error_)
+      onError?.(error_)
+
+      const alwaysAllowRetry = retryTimes === -1 // 表示永远开启请求重试
+      if (allowRequestRetry && (alwaysAllowRetry || allowRetryTimes > 0)) {
+        // eslint-disable-next-line no-plusplus
+        const index = retryTimes! - allowRetryTimes--
+        currentWaitTime = indexRetreat! ** index // 指数退避
+
+        clearTimeout(retryTimer!)
+        retryTimer = setTimeout(() => {
+          run(lastParams)
+        }, currentWaitTime)
+      }
+
+      if (throwOnError) throw error_
+    } finally {
+      toggleLoading()
+    }
   }
 
   const cancel = (): void => {

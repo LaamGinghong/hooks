@@ -1,7 +1,8 @@
 import type { Ref } from 'vue'
 import { ref } from 'vue'
+import useEventListener from 'hooks/dom/use-event-listener'
+
 import type { UseDocumentVisibilityResult } from './types'
-import useEventListener from '../use-event-listener'
 
 export default function useDocumentVisibility(): Ref<UseDocumentVisibilityResult> {
   const visibility = ref<UseDocumentVisibilityResult>()

@@ -41,8 +41,8 @@ module.exports = {
             direction: false,
           },
           fn: {
-            function: false
-          }
+            function: false,
+          },
         },
       },
     ],
@@ -58,6 +58,7 @@ module.exports = {
     ],
     'no-useless-constructor': 'off',
     '@typescript-eslint/no-useless-constructor': 'error',
+    'no-plusplus': 'off',
   },
   overrides: [
     {

@@ -9,14 +9,14 @@
 ```ts
 import { useDebounce } from 'i-hooks'
 
-const debouncedValue = useDebounce(value, { wait: 500 });
+const debouncedValue = useDebounce(fn, { wait: 500 });
 ```
 
 ## 基础 API
   
 ```ts
 const debouncedValue = useDebounce(
-  value: any,
+  fn: (...args: any[]) => any,
   options?: Options
 );
 ```

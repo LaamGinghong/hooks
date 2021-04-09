@@ -9,14 +9,14 @@
 ```ts
 import { useThrottle } from 'i-hooks'
 
-const throttledValue = useThrottle(value, { wait: 500 })
+const throttledValue = useThrottle(fn, { wait: 500 })
 ```
 
 ## 基础 API
   
 ```ts
 const throttledValue = useThrottle(
-  value: any,
+  fn: (...args: any[]) => any,
   options?: Options
 );
 ```

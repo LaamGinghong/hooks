@@ -59,6 +59,7 @@ module.exports = {
     'no-useless-constructor': 'off',
     '@typescript-eslint/no-useless-constructor': 'error',
     'no-plusplus': 'off',
+    'no-underscore-dangle': 'off',
   },
   overrides: [
     {

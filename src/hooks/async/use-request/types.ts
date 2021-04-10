@@ -57,6 +57,11 @@ export interface RequestOptions<Result, Params extends Record<string, any>> {
    */
   manual: boolean
   /**
+   * 请求是否可以发出
+   * 作用于依赖请求
+   */
+  ready: boolean
+  /**
    * 依赖收集
    * 当被收集的依赖发生改变时，会自动触发请求执行
    */
@@ -106,6 +111,11 @@ export interface RequestOptions<Result, Params extends Record<string, any>> {
    * 如设置为一个负数会抛出异常并且关闭延时
    */
   loadingDelay: number
+  /**
+   * 轮询间隔时间
+   * 设置为 0 或者不设置则关闭
+   */
+  pollingInterval: number
   /**
    * 页面不可见时是否继续轮询
    */

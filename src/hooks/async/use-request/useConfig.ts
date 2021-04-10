@@ -1,5 +1,7 @@
+import type { Ref } from 'vue'
 import { inject, provide, shallowReactive, shallowReadonly } from 'vue'
-import { MultipleRequestOptions, RequestOptions, RequestServiceConfig } from '@/hooks/async/use-request/types'
+import { isString } from 'lodash-es'
+import type { RequestOptions, MultipleRequestOptions, RequestServiceConfig } from './types'
 
 export interface RequestGlobalConfig<Result, Params> {
   manual: boolean
@@ -48,13 +50,43 @@ export function useGlobalProvider<Result, Params>(
   return currentConfig
 }
 
-export function useConfig<Result, Params extends Record<string, any>>(
+export interface Options<Result, Params extends Record<string, any>> {
+  manual: boolean
+  ready?: boolean
+  refreshDeps?: Ref<Ref<any[]>>
+  requestMethod<_Params, _Data>(service: RequestServiceConfig<_Params, _Data>): Promise<any>
+  formatParams(params?: Params): any
+  formatResult(response: any): Result
+  onSuccess?(data: Result): void
+  onError?(error: Error): void
+  defaultParams?: Params
+  loadingDelay: number
+  pollingInterval?: number
+  pollingWhenHidden: boolean
+  debounceInterval?: number
+  throttleInterval?: number
+  throwOnError: boolean
+  cacheKey?: number | string | symbol
+  cacheTime: number
+  allowRequestRetry: boolean
+  retryTimes: number
+  indexRetreat: number
+  fetchKey?: (...arguments_: any[]) => string | number | symbol
+}
+
+export function useOptions<Result, Params extends Record<string, any>>(
   options: Readonly<Partial<RequestOptions<Result, Params> | MultipleRequestOptions<Result, Params>>>,
-) {
+): Options<Result, Params> {
   const config = useGlobalProvider<Result, Params>()
-  const result: Readonly<Partial<RequestOptions<Result, Params> | MultipleRequestOptions<Result, Params>>> = {
+  const result = {
     ...config,
     ...options,
   }
   return result
+}
+
+export function useService<Params, Data>(
+  service: string | RequestServiceConfig<Params, Data>,
+): RequestServiceConfig<Params, Data> {
+  return isString(service) ? ({ url: service, method: 'GET' } as RequestServiceConfig<Params, Data>) : service
 }
